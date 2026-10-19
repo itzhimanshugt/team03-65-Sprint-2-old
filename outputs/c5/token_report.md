@@ -22,4 +22,4 @@ tiktoken is OpenAI's tokenizer, so for Gemini it is an estimate. The `usage` fie
 | One question (3,400 in / 300 out) | 3,700 | $0.00177 | $0.00069 |
 | 100-question eval run | 370,000 | $0.177 | $0.069 |
 
-On Gemini's free tier these calls cost $0; the limit is requests per minute, not money.
+On Gemini's free tier these calls cost $0; the limit is the request quota (about 10 per minute and 20 per day per model), not money.
