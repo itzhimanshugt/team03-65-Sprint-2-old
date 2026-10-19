@@ -18,6 +18,7 @@
 | 2 | Rewrite user journey as formatted user stories | §7 User stories |
 | 3 | Add impact to risks | §13 Risk register |
 | 3 | Annotations, empty states, flow diagram for Figma | §8 Flow diagram, §9 Empty states, [docs/MOCK_UX_ANNOTATIONS.md](docs/MOCK_UX_ANNOTATIONS.md) |
+| — | Align with the Sprint 2 concept roadmap (C1–C40) | §6.2 (OpenAI-compatible API, multi-format intake, hybrid search, caching, Streamlit), §16 Concept map |
 
 ---
 
@@ -29,15 +30,15 @@ A financial advisory firm maintains market research, fund factsheets, and regula
 
 ### 1.2 Problem sizing
 
-We size the problem for a representative mid-sized advisory firm. Figures marked *Assumption* are working estimates; they will be validated through 5 advisor interviews and a timed lookup exercise in Week 1, and the PRD will be updated with measured values.
+We size the problem for a representative mid-sized advisory firm. Figures marked *Assumption* are working estimates; they will be validated through a timed manual lookup exercise (10 questions) and short user interviews before final delivery, and the PRD will be updated with measured values.
 
 | Parameter | Baseline value | Basis |
 |---|---|---|
 | Advisors in firm | 50 | Assumption — mid-sized firm |
 | Client questions per advisor per day that need a document check | 8 | Assumption |
-| Time to find and verify one answer manually | 12 min (median) | Assumption — to be measured in Week 1 timed exercise |
+| Time to find and verify one answer manually | 12 min (median) | Assumption — to be measured in the timed lookup exercise |
 | Approved documents in the shared drive | ~500 PDFs, refreshed monthly (factsheets) | Assumption |
-| Share of manual answers that cite an outdated or unapproved document | 10% | Assumption — to be measured in Week 1 audit of 50 sample answers |
+| Share of manual answers that cite an outdated or unapproved document | 10% | Assumption — to be measured in an audit of 50 sample answers |
 
 **Derived impact (baseline):**
 
@@ -81,39 +82,43 @@ VerifAI is a Retrieval-Augmented Generation (RAG) assistant that lets advisors a
 - Replacing compliance professionals or guaranteeing legal/regulatory compliance.
 - Training a foundation model from scratch.
 - Answering from information outside the approved document set (no web search).
-- OCR of scanned/image-only PDFs (Sprint 2 supports text-based PDFs only).
+- OCR of scanned/image-only PDFs (Sprint 2 supports text-based PDF, HTML, TXT and Markdown).
 
 ---
 
 ## 4. KPIs
 
-Every KPI below is measured on the evaluation set defined in §6.4 unless stated otherwise. Timelines are sprint weeks (Week 1 = first week of Sprint 2 build).
+Every KPI below is measured on the evaluation set defined in §6.4 unless stated otherwise. Timelines are dates in the final sprint week (Day 1 = Mon 19 Oct 2026, Day 7 = Sun 25 Oct 2026).
 
 | ID | KPI | Metric (definition) | Measurement method | Target | Timeline |
 |---|---|---|---|---|---|
-| K1 | Retrieval recall | Recall@5 = share of answerable questions where ≥ 1 labelled relevant chunk is in the top 5 retrieved | Automated script over the 75 answerable eval questions | **≥ 0.85** | End of Week 3 |
-| K2 | Retrieval ranking quality | MRR@5 (mean reciprocal rank of first relevant chunk) | Same automated script as K1 | **≥ 0.70** | End of Week 3 |
-| K3 | Citation accuracy | % of citations whose cited chunk actually supports the sentence it is attached to | Manual review of 50 randomly sampled answers, 2 reviewers, disagreements resolved by discussion | **≥ 90%** | End of Week 4 |
-| K4 | Hallucination rate | % of answers containing ≥ 1 claim not supported by retrieved context | Manual review of the same 50 answers as K3 | **≤ 5%** | End of Week 4 |
-| K5 | Correct refusal rate | % of the 25 unanswerable/out-of-scope eval questions where the system refuses or asks to clarify | Automated: response flagged `refused=true` by the API | **≥ 90%** | End of Week 4 |
-| K6 | False refusal rate | % of the 75 answerable eval questions that are wrongly refused | Automated: `refused=true` on an answerable question | **≤ 10%** | End of Week 4 |
-| K7 | Time to verified answer | Median time from typing a question to reading a cited answer | Moderated usability test, 5 participants × 5 tasks, stopwatch; compared with the 12-min manual baseline | **≤ 60 s** (≥ 90% faster than baseline) | End of Week 5 |
-| K8 | Response latency | p95 end-to-end API latency; p95 time to first streamed token | API request logs over the full 100-question eval run | **p95 ≤ 8 s; first token p95 ≤ 2 s** | End of Week 5 |
-| K9 | Ingestion completeness | % of corpus documents indexed with all required metadata fields (§6.3) populated | Automated validation script over the vector store | **100%** of 50 docs | End of Week 2 |
-| K10 | Ingestion speed | Time to index one 50-page text PDF (upload → searchable) | Timed on 5 sample documents, median | **≤ 60 s** | End of Week 2 |
-| K11 | Usability | System Usability Scale (SUS) score | SUS questionnaire after the K7 usability test | **≥ 70** | End of Week 5 |
+| K1 | Retrieval recall | Recall@5 = share of answerable questions where ≥ 1 labelled relevant chunk is in the top 5 retrieved | Automated script over the 75 answerable eval questions | **≥ 0.85** | 22 Oct 2026 (Day 4) |
+| K2 | Retrieval ranking quality | MRR@5 (mean reciprocal rank of first relevant chunk) | Same automated script as K1 | **≥ 0.70** | 22 Oct 2026 (Day 4) |
+| K3 | Citation accuracy | % of citations whose cited chunk actually supports the sentence it is attached to | LLM-as-judge over all answers, plus manual check of 30 random answers to confirm the judge | **≥ 90%** | 23 Oct 2026 (Day 5) |
+| K4 | Hallucination rate | % of answers containing ≥ 1 claim not supported by retrieved context | Same review as K3 | **≤ 5%** | 23 Oct 2026 (Day 5) |
+| K5 | Correct refusal rate | % of the 25 unanswerable/out-of-scope eval questions where the system refuses or asks to clarify | Automated: response flagged `refused=true` by the API | **≥ 90%** | 23 Oct 2026 (Day 5) |
+| K6 | False refusal rate | % of the 75 answerable eval questions that are wrongly refused | Automated: `refused=true` on an answerable question | **≤ 10%** | 23 Oct 2026 (Day 5) |
+| K7 | Time to verified answer | Median time from typing a question to reading a cited answer | Usability test, 3 participants × 5 tasks, stopwatch; compared with the 12-min manual baseline | **≤ 60 s** (≥ 90% faster than baseline) | 25 Oct 2026 (Day 7) |
+| K8 | Response latency | p95 end-to-end API latency; p95 time to first streamed token | API request logs over the full 100-question eval run | **p95 ≤ 8 s; first token p95 ≤ 2 s** | 24 Oct 2026 (Day 6) |
+| K9 | Ingestion completeness | % of corpus documents indexed with all required metadata fields (§6.3) populated | Automated validation script over the vector store | **100%** of corpus docs | 20 Oct 2026 (Day 2) |
+| K10 | Ingestion speed | Time to index one 50-page text PDF (upload → searchable) | Timed on 5 sample documents, median | **≤ 60 s** | 21 Oct 2026 (Day 3) |
+| K11 | Usability | System Usability Scale (SUS) score | SUS questionnaire after the K7 usability test | **≥ 70** | 25 Oct 2026 (Day 7) |
 
 ---
 
 ## 5. Scope and milestones
 
-| Week | Milestone | KPIs due |
-|---|---|---|
-| 1 | Workspace, repo, PRD v2, Mock UX approved; corpus collected; baseline measured | — |
-| 2 | Ingestion pipeline (extract, clean, chunk, metadata) + embeddings + vector store | K9, K10 |
-| 3 | Retrieval (top-K, filters, re-ranking) + retrieval evaluation | K1, K2 |
-| 4 | Grounded generation, citations, guardrails/refusal, follow-ups + answer evaluation | K3, K4, K5, K6 |
-| 5 | API, upload, chat UI, streaming, logging, deployment, usability test, docs | K7, K8, K11 |
+One pull request per concept (§16). Several concepts are delivered per day.
+
+| Day | Date | Milestone | Concepts | KPIs due |
+|---|---|---|---|---|
+| 1 | Mon 19 Oct | Workspace, GitHub workflow, PRD v2, LLM client, prompts, tokens, JSON output | C1–C9 | — |
+| 2 | Tue 20 Oct | Multi-format loading, cleaning, chunking, metadata, corpus validation | C10–C15 | K9 |
+| 3 | Wed 21 Oct | Embeddings via API, similarity, batching, sanity tests, vector DB + indexing | C16–C22 | K10 |
+| 4 | Thu 22 Oct | Top-K search, filters + hybrid search, tuning, re-ranking, retrieval eval | C23–C27 | K1, K2 |
+| 5 | Fri 23 Oct | RAG pipeline, context injection, grounded answers, citations, guardrails, follow-ups, eval | C28–C34 | K3–K6 |
+| 6 | Sat 24 Oct | FastAPI, upload endpoint, Streamlit UI, streaming, caching/logging | C35–C39 | K8 |
+| 7 | Sun 25 Oct | Deployment, documentation, usability test, final KPI report | C40 | K7, K11 |
 
 ---
 
@@ -127,11 +132,12 @@ The firm's "approved document set" is simulated using publicly available Indian 
 |---|---|---|---|---|---|
 | Fund factsheets | Monthly factsheets published by 5 AMFI-registered AMCs on their websites | 15 | Text-based PDF | 2–60 | Jan–Sep 2026 |
 | Scheme disclosures | Scheme Information Documents (SID) and Key Information Memorandums (KIM) from the same AMCs | 10 | Text-based PDF | 20–150 | Latest version available |
-| Regulatory circulars | SEBI circulars on mutual funds and investment advisers (sebi.gov.in) | 15 | PDF | 3–40 | 2023–2026 |
-| Market research | AMC market outlook / commentary reports | 10 | Text-based PDF | 5–30 | Jan–Sep 2026 |
-| **Total** | | **50** | | **~1,500 pages (est.)** | |
+| Regulatory circulars | SEBI circulars on mutual funds and investment advisers (sebi.gov.in) | 15 | HTML or PDF | 3–40 | 2023–2026 |
+| Market research | AMC market outlook / commentary reports | 7 | Text-based PDF | 5–30 | Jan–Sep 2026 |
+| Internal notes | Firm FAQ / product notes written for the simulation | 3 | Markdown / TXT | 1–5 | Oct 2026 |
+| **Total** | | **50** | **4 formats** | **~1,500 pages (est.)** | |
 
-**Inclusion rules:** English only; text-based PDF (selectable text); ≤ 25 MB per file; publicly downloadable.
+**Inclusion rules:** English only; PDF with selectable text, HTML, TXT or Markdown; ≤ 25 MB per file; publicly downloadable or written for the simulation.
 **Exclusion rules:** scanned/image-only PDFs, password-protected files, spreadsheets, non-English documents.
 **Versioning test:** at least 3 fund factsheets are included in two monthly versions (e.g. August and September) to test that answers cite the latest approved version.
 
@@ -139,18 +145,25 @@ The firm's "approved document set" is simulated using publicly available Indian 
 
 | Parameter | Value | Rationale |
 |---|---|---|
-| Text extraction | `pypdf` (per page, page number retained) | Keeps page numbers for citations |
+| Loading / extraction | PDF: `pypdf` (per page, page number retained); HTML: `BeautifulSoup` (main text, section headings as positions); TXT/MD: read as UTF-8, headings as positions | One common `Document(pages, metadata)` representation for all four formats |
 | Cleaning | Remove repeated headers/footers, page numbers, disclaimer boilerplate repeated on > 50% of pages; normalise whitespace and Unicode (NFKC) | Reduces noise in embeddings |
 | Chunking strategy | Recursive split on headings → paragraphs → sentences | Keeps related facts together |
-| Chunk size / overlap | **400 tokens / 60 tokens (15%)** | Fits the embedding model's 512-token limit with margin |
+| Chunk size / overlap | **400 tokens / 60 tokens (15%)**, counted with `tiktoken` (`cl100k_base`) | Focused chunks; 5 chunks + prompt fit the 3,000-token context budget |
 | Tables | Flattened row-wise to "column: value" text inside the chunk | Factsheet facts (expense ratio, AUM, exit load) live in tables |
-| Embedding model | `BAAI/bge-small-en-v1.5` (384 dimensions), run locally | Free, strong English retrieval quality, no API cost |
+| API access | OpenAI Python SDK against an **OpenAI-compatible endpoint**; `base_url`, key and model names set in `.env` | One client for chat and embeddings; provider can be switched without code changes |
+| Default provider | Google Gemini via its OpenAI-compatible endpoint (free tier). Alternative: OpenAI | Zero cost during development |
+| Embedding model | `gemini-embedding-001` (default) or OpenAI `text-embedding-3-small` (1,536 dims); the dimension is validated when the collection is created | Hosted API, as required by the sprint roadmap |
+| Batch embedding | 64 chunks per request, exponential backoff on 429/5xx (max 5 retries), already-embedded chunks skipped by `chunk_id` | Handles rate limits and keeps re-runs cheap |
+| Chat model | `gemini-2.5-flash` (default) or OpenAI `gpt-4o-mini`; temperature 0.1, max 600 output tokens | Low temperature for factual, consistent answers |
+| Output format | JSON `{answer, citations: [{n, chunk_id, source, page}], refused}` validated with Pydantic; one retry on invalid JSON | Reliable parsing for citation chips |
 | Vector database | ChromaDB (persistent, cosine distance) | Simple local setup, supports metadata filters |
 | Expected index size | ~4,000–5,000 chunks | ~1,500 pages × ~3 chunks/page |
-| Retrieval | Top-20 candidates → optional cross-encoder re-rank → **top-5** to the LLM | Balances recall and context size |
-| Insufficient-evidence threshold | Refuse if best re-ranked similarity < **0.45** (initial value, tuned in Week 3 against K5/K6) | Drives safe refusal |
+| Retrieval | Hybrid: vector top-20 + BM25 keyword top-20, merged with reciprocal rank fusion → re-rank → **top-5** to the LLM | Keyword search catches exact terms such as circular numbers and fund names |
+| Insufficient-evidence threshold | Refuse if best vector similarity < **0.45** (initial value, tuned against K5/K6) | Drives safe refusal |
 | Context budget | ≤ 3,000 tokens of retrieved context per answer | Keeps latency and cost bounded |
-| Conversation memory | Last 4 turns, condensed into a standalone query before retrieval | Supports follow-ups without drifting |
+| Conversation memory | Last 4 turns, trimmed to a 1,500-token budget, condensed into a standalone query before retrieval | Supports follow-ups without drifting |
+| Caching | Answers cached by hash of (normalised question + filters + index version) for 24 h | Repeated questions cost nothing and return instantly |
+| Chat UI | Streamlit | Python-only, fastest path to a working chat interface |
 
 ### 6.3 Chunk metadata schema
 
@@ -164,7 +177,7 @@ The firm's "approved document set" is simulated using publicly available Indian 
 | `version` | integer | `2` | Yes |
 | `is_latest` | boolean | `true` | Yes |
 | `approved_by` / `approved_at` | string / datetime | `compliance@firm` / `2026-10-02T10:00Z` | Yes |
-| `page` | integer | `4` | Yes |
+| `page` | integer (PDF page, or section index for HTML/TXT/MD) | `4` | Yes |
 | `chunk_id` / `chunk_index` | string / integer | `3f2a…-0012` / `12` | Yes |
 | `token_count` | integer | `388` | Yes |
 | `checksum` | string (SHA-256 of file) | `9b1c…` | Yes (duplicate detection) |
@@ -197,7 +210,7 @@ Priority uses MoSCoW (M = Must, S = Should, C = Could). Acceptance criteria use 
 | US-06 | **As an** advisor, **I want** to ask follow-up questions, **so that** I do not need to repeat context. | **Given** a previous answer about fund X, **when** I ask "and its exit load?", **then** retrieval targets fund X and the answer is cited. | S |
 | US-07 | **As an** advisor, **I want** to filter by document type, issuer or date, **so that** I get answers from the right source. | **Given** filters are set, **when** I ask, **then** only chunks matching the filters are retrieved, and active filters are visible above the chat. | S |
 | US-08 | **As an** advisor, **I want** to see the answer stream in, **so that** I am not left waiting on a blank screen. | **Given** a question, **when** generation starts, **then** the first token appears within 2 s (p95). | S |
-| US-09 | **As a** compliance officer, **I want** to upload an approved PDF with its type, issuer and date, **so that** advisors can query it. | **Given** a valid text-based PDF ≤ 25 MB, **when** I upload it, **then** it is indexed within 60 s (50 pages) and shows status "Indexed" with chunk count. | M |
+| US-09 | **As a** compliance officer, **I want** to upload an approved document (PDF, HTML, TXT or MD) with its type, issuer and date, **so that** advisors can query it. | **Given** a valid file ≤ 25 MB, **when** I upload it, **then** it is indexed within 60 s (50 pages) and shows status "Indexed" with chunk count. | M |
 | US-10 | **As a** compliance officer, **I want** to see why an upload failed, **so that** I can fix it. | **Given** a scanned, encrypted, oversized or unsupported file, **when** I upload it, **then** I see status "Failed" with a specific reason and nothing is added to the index. | M |
 | US-11 | **As a** compliance officer, **I want** duplicates detected and new versions to replace old ones, **so that** advisors only get the latest approved information. | **Given** a file with an existing checksum, **then** the upload is rejected as duplicate; **given** a new version of an existing document, **then** the old version is marked `is_latest=false` and excluded from retrieval by default. | M |
 | US-12 | **As a** compliance officer, **I want** a log of questions, cited sources and refusals, **so that** I can review how the assistant is being used. | **Given** questions were asked, **when** I open the activity log, **then** I see timestamp, question, cited `doc_id`s, refused flag and latency — with no API keys or secrets logged. | C |
@@ -246,10 +259,10 @@ flowchart TD
 ```mermaid
 flowchart LR
     subgraph Ingestion
-      P[PDF upload] --> EX[Extract per page] --> CL[Clean] --> CH[Chunk 400/60 + metadata] --> EM[Embed bge-small]
+      P[Upload: PDF / HTML / TXT / MD] --> EX[Load + extract] --> CL[Clean] --> CH[Chunk 400/60 + metadata] --> EM[Batch embed via OpenAI-compatible API]
     end
     EM --> VDB[(ChromaDB)]
-    Q[Question + chat history] --> RW[Condense to standalone query] --> QE[Embed query] --> SS[Top-20 search + metadata filter]
+    Q[Question + chat history] --> RW[Condense to standalone query] --> QE[Embed query] --> SS[Vector top-20 + BM25 top-20 + metadata filter → RRF]
     VDB --> SS
     SS --> RR[Re-rank → top-5] --> TH{Score ≥ threshold?}
     TH -->|No| RF[Refusal / clarification]
@@ -282,7 +295,7 @@ flowchart LR
 ## 10. Functional requirements
 
 ### 10.1 Ingestion
-- FR-1 Accept text-based PDF uploads ≤ 25 MB with metadata (`doc_type`, `issuer`, `published_date`).
+- FR-1 Accept PDF (text-based), HTML, TXT and Markdown uploads ≤ 25 MB with metadata (`doc_type`, `issuer`, `published_date`).
 - FR-2 Extract text per page and retain page numbers.
 - FR-3 Clean boilerplate, whitespace and encoding as per §6.2.
 - FR-4 Chunk using the strategy and sizes in §6.2.
@@ -304,10 +317,11 @@ flowchart LR
 - FR-16 Support follow-ups using the last 4 turns.
 
 ### 10.4 Application
-- FR-17 REST API: `POST /documents`, `GET /documents`, `POST /chat` (streaming), `GET /logs`, `GET /health`.
-- FR-18 Chat UI with streaming, citation chips, source panel and filters.
+- FR-17 FastAPI REST API: `POST /documents`, `GET /documents`, `POST /chat`, `POST /chat/stream` (server-sent events), `GET /stats`, `GET /health`.
+- FR-18 Streamlit chat UI with streaming, citation chips, source panel and filters.
 - FR-19 Knowledge base UI with upload, status and versions.
 - FR-20 Log requests, retrieved `chunk_id`s, refusals, errors and latency without secrets.
+- FR-21 Cache answers for repeated questions (§6.2) and expose usage counts via `GET /stats`.
 
 ---
 
@@ -338,12 +352,12 @@ Likelihood (L) and Impact (I) are scored 1 (low) – 3 (high). Severity = L × I
 |---|---|---|---|---|---|---|
 | Hallucinated answers | 2 | 3 | **6 – High** | Advisor passes false information to a client → mis-selling complaint, regulatory exposure, loss of trust in the tool | Grounded prompt, score threshold, citation per claim, refusal handling; measured by K4 | K4 > 5% on review sample |
 | Outdated document cited | 2 | 3 | **6 – High** | Client receives superseded fund data (e.g. old expense ratio) → compliance breach | Versioning, `is_latest` filter by default, published date shown on every citation | Answers citing `is_latest=false` chunks |
-| Poor retrieval | 2 | 3 | **6 – High** | Correct document exists but is missed → false refusals or wrong answers; advisors stop using the tool | Eval set, tune chunk size/top-K, re-ranking, table flattening; measured by K1/K2 | Recall@5 < 0.85 in Week 3 |
+| Poor retrieval | 2 | 3 | **6 – High** | Correct document exists but is missed → false refusals or wrong answers; advisors stop using the tool | Eval set, tune chunk size/top-K, re-ranking, table flattening; measured by K1/K2 | Recall@5 < 0.85 on Day 4 |
 | Over-refusal | 2 | 2 | 4 – Medium | Tool feels useless; advisors fall back to manual search, losing the time saving | Tune threshold against K5 and K6 together | K6 > 10% |
-| Table/number extraction errors | 3 | 2 | **6 – High** | Wrong figures (AUM, NAV, exit load) in answers | Row-wise table flattening; spot-check 20 factsheet tables in Week 2 | Mismatch on spot-check |
+| Table/number extraction errors | 3 | 2 | **6 – High** | Wrong figures (AUM, NAV, exit load) in answers | Row-wise table flattening; spot-check 20 factsheet tables on Day 2 | Mismatch on spot-check |
 | Exposed API keys | 1 | 3 | 3 – Medium | Unauthorised usage cost, account suspension, security incident | Env variables, `.gitignore`, secret scan before each PR | Key string found in diff |
 | LLM/API outage or rate limit | 2 | 2 | 4 – Medium | Advisors cannot get answers; demo failure | Retries with backoff, clear error state, configurable provider | Error rate > 5% in logs |
-| Latency above target | 2 | 2 | 4 – Medium | Slower than asking a colleague → low adoption | Local embeddings, top-5 context cap, streaming | p95 > 8 s |
+| Latency above target | 2 | 2 | 4 – Medium | Slower than asking a colleague → low adoption | Batch embedding at index time, answer cache, top-5 context cap, streaming | p95 > 8 s |
 | Duplicate documents | 2 | 1 | 2 – Low | Repeated citations, wasted context budget | SHA-256 checksum dedup | Duplicate checksum on upload |
 | Team capacity (team reduced from 3 to 1 member) | 3 | 2 | **6 – High** | Scope slips; Should/Could stories may not ship | MoSCoW prioritisation; Must stories first; re-use libraries; weekly scope check | Milestone missed by > 2 days |
 
@@ -352,7 +366,6 @@ Likelihood (L) and Impact (I) are scored 1 (low) – 3 (high). Severity = L × I
 ## 14. Future enhancements
 
 - OCR for scanned documents.
-- Hybrid retrieval (BM25 + vectors).
 - Role-based access control and SSO.
 - Full compliance audit trail and answer approval workflow.
 - Larger evaluation set and automated LLM-as-judge grading.
@@ -378,3 +391,52 @@ Likelihood (L) and Impact (I) are scored 1 (low) – 3 (high). Severity = L × I
 | 3.37–3.43 | RAG, citations, guardrails, conversation, evaluation |
 | 3.44–3.48 | API, upload, UI, streaming, monitoring |
 | 3.49–3.50 | Deployment, documentation and final delivery |
+
+---
+
+## 16. Sprint 2 concept map
+
+Each concept is delivered as one pull request linked to its issue.
+
+| Concept | Name | Issue | PRD reference |
+|---|---|---|---|
+| C1 | Development Environment & Project Workspace Setup | [#3](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/3) | §11 |
+| C2 | GitHub Repository & Team Workflow Setup | [#24](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/24) | — |
+| C3 | LLM API Access & First Completion Call | [#25](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/25) | §6.2 |
+| C4 | Prompt Construction & System/User Roles | [#26](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/26) | FR-13, FR-15 |
+| C5 | Tokens, Tokenization & Cost Estimation | [#27](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/27) | §6.2 |
+| C6 | Context Windows & Message History Management | [#28](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/28) | FR-16 |
+| C7 | Model Parameters & Output Control | [#29](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/29) | §6.2 |
+| C8 | Structured Output & JSON Response Handling | [#30](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/30) | §6.2, US-02 |
+| C9 | Prompt Templates & Reusable Prompt Design | [#31](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/31) | FR-13 |
+| C10 | Document Loading & Multi-Format Intake | [#32](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/32) | FR-1, FR-2 |
+| C11 | Text Extraction & Cleaning Pipeline | [#6](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/6) | FR-3 |
+| C12 | Document Chunking Strategies | [#7](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/7) | FR-4 |
+| C13 | Chunk Metadata & Source Tracking | [#33](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/33) | §6.3, FR-5 |
+| C14 | Token-Aware Chunk Sizing & Overlap | [#34](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/34) | §6.2 |
+| C15 | Corpus Preparation & Ingestion Validation | [#4](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/4) | §6.1, K9 |
+| C16 | Embeddings Fundamentals & Vector Representation | [#35](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/35) | — |
+| C17 | Generating Embeddings via API | [#8](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/8) | FR-7 |
+| C18 | Embedding Similarity & Distance Metrics | [#36](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/36) | §6.2 |
+| C19 | Batch Embedding & Rate/Cost Management | [#37](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/37) | §6.2 |
+| C20 | Embedding Quality Checks & Sanity Tests | [#38](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/38) | — |
+| C21 | Vector Database Setup & Collection Design | [#39](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/39) | FR-8 |
+| C22 | Indexing Embeddings & Metadata Storage | [#40](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/40) | FR-8, K9 |
+| C23 | Similarity Search & Top-K Retrieval | [#9](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/9) | FR-9 |
+| C24 | Metadata Filtering & Hybrid Search | [#41](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/41) | FR-9, US-07 |
+| C25 | Retrieval Relevance Tuning | [#42](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/42) | K1 |
+| C26 | Chunk Re-Ranking for Precision | [#10](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/10) | FR-10, K2 |
+| C27 | Retrieval Evaluation & Recall Testing | [#11](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/11) | §6.4, K1, K2 |
+| C28 | RAG Pipeline Architecture & Flow Design | [#43](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/43) | §8 |
+| C29 | Context Injection & Prompt Augmentation | [#44](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/44) | FR-12 |
+| C30 | Grounded Answer Generation | [#12](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/12) | FR-13, US-01 |
+| C31 | Source Citation & Attribution | [#45](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/45) | US-02, US-03, K3 |
+| C32 | Hallucination Guardrails & Refusal Handling | [#13](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/13) | FR-14, FR-15, K5, K6 |
+| C33 | Conversational RAG & Follow-Up Context | [#14](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/14) | FR-16, US-06 |
+| C34 | RAG Evaluation & Answer Quality Scoring | [#15](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/15) | K3–K6 |
+| C35 | Backend API for the RAG Service | [#16](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/16) | FR-17 |
+| C36 | Document Upload & Indexing Endpoint | [#18](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/18) | FR-1, FR-6, US-09–US-11 |
+| C37 | Chat Interface & Query UI | [#17](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/17) | FR-18 |
+| C38 | Streaming Responses & Citation Display | [#46](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/46) | US-08, K8 |
+| C39 | Caching, Logging & Usage Monitoring | [#19](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/19) | FR-20, FR-21, US-12 |
+| C40 | Deployment, Documentation & Delivery | [#20](https://github.com/itzhimanshugt/team03-65-Sprint-2/issues/20) | §11, §12 |
