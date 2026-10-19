@@ -43,6 +43,8 @@ def load_document(path: str | Path) -> Document:
 
 def _pdf(path: Path):
     reader = PdfReader(path)
+    # shortcut: PDFs locked with an empty user password are rejected too; try
+    # reader.decrypt("") (needs the cryptography package) if real uploads hit this.
     if reader.is_encrypted:
         raise UnsupportedDocumentError("File is password protected.")
     return "pdf", [(i, page.extract_text() or "") for i, page in enumerate(reader.pages, start=1)]
